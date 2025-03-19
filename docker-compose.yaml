@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  # Backend (Java/DSpace)
+  backend:
+    container_name: backend
+    image: seu-backend-image:${DSPACE_VER:-latest}
+    build:
+      context: ./interacoes-backend
+      dockerfile: Dockerfile
+    environment:
+      db__P__url: 'jdbc:postgresql://dspacedb:5432/dspace'
+      solr__P__server: http://dspacesolr:8983/solr
+      dspace__P__server__P__url: http://backend:8080/server
+      dspace__P__ui__P__url: http://frontend:4000
+    ports:
+      - "8080:8080"
+    depends_on:
+      - dspacedb
+      - dspacesolr
+    networks:
+      - dspacenet
+
+  # Banco de dados (PostgreSQL)
+  dspacedb:
+    container_name: dspacedb
+    image: dspace/dspace-postgres-pgcrypto:${DSPACE_VER:-latest}
+    environment:
+      POSTGRES_PASSWORD: dspace
+    volumes:
+      - pgdata:/pgdata
+    networks:
+      - dspacenet
+
+  # Solr
+  dspacesolr:
+    container_name: dspacesolr
+    image: dspace/dspace-solr:${DSPACE_VER:-latest}
+    ports:
+      - "8983:8983"
+    volumes:
+      - solr_data:/var/solr/data
+    networks:
+      - dspacenet
+
+  # Frontend (Angular)
+  frontend:
+    container_name: frontend
+    image: seu-frontend-image:${DSPACE_VER:-latest}
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: development
+    ports:
+      - "4000:4000"
+    depends_on:
+      - backend
+    networks:
+      - dspacenet
+
+  # Nginx (Proxy Reverso)
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    ports:      
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - dspacenet
+
+networks:
+  dspacenet:
+    driver: bridge
+
+volumes:
+  pgdata:
+  solr_data:

@@ -1,0 +1,14 @@
+[submodule "interacoes-front"]
+	path = interacoes-front
+	url = https://github.com/interacoes/interacoes-front.git
+	branch = dspace
+[submodule "interacoes-back"]
+	path = interacoes-back
+	url = https://github.com/interacoes/interacoes-backend.git
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/interacoes/interacoes-front.git
+	branch = dspace
+[submodule "backend"]
+	path = backend
+	url = https://github.com/interacoes/interacoes-backend.git
