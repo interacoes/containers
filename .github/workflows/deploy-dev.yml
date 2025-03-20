@@ -2,7 +2,7 @@ name: Deploy Test Environment
 
 on:
   repository_dispatch:
-    types: [frontend-updated]
+    types: [frontend-test]
 
 jobs:
   deploy:
