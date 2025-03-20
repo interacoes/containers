@@ -6,6 +6,7 @@ on:
 
 jobs:
   deploy:
+    if: github.event.client_payload.branch == 'test'  # Condição para executar apenas se a branch for test
     runs-on: ubuntu-latest
 
     steps:
