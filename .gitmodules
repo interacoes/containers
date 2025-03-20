@@ -1,6 +1,6 @@
 [submodule "frontend"]
 	path = frontend
-	url = git@github.com:interacoes/containers.git
+	url = git@github.com:interacoes/interacoes-front.git
 	branch = dspace
 [submodule "backend"]
 	path = backend
