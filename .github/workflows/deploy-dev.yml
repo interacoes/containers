@@ -16,6 +16,7 @@ jobs:
         with:
           ref: develop
           submodules: 'recursive'
+          token: ${{ secrets.FRONTEND_REPO_TOKEN }}
 
       # Passo 2: Atualizar o submódulo do frontend para a branch develop
       - name: Update frontend submodule
