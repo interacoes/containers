@@ -21,10 +21,10 @@ jobs:
       # Passo 2: Atualizar o submódulo do frontend para a branch develop
       - name: Update frontend submodule
         run: |
-          cd frontend || exit 1
-          git fetch --all || exit 1
-          git checkout develop -f || exit 1
-          git pull origin develop -f || exit 1
+          cd frontend 
+          git fetch --all 
+          git checkout develop -f |
+          git pull origin develop -f 
 
       # Passo 3: Deploy no servidor
       - name: Deploy to server
