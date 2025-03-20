@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Passo 1: Verificar se o evento foi acionado pela branch test
+      # Verificar se o evento foi acionado pela branch test
       - name: Check if test branch
         id: check-branch
         run: |
@@ -18,14 +18,14 @@ jobs:
             exit 78  # Exit with a neutral status to skip the workflow
           fi
 
-      # Passo 2: Checkout da branch test
+      # Checkout da branch test
       - name: Checkout Containers repository
         uses: actions/checkout@v3
         with:
           ref: test
           submodules: 'recursive'
 
-      # Passo 3: Atualizar o submódulo do frontend para a branch test
+      # Atualizar o submódulo do frontend para a branch test
       - name: Update frontend submodule
         run: |
           cd frontend || exit 1
@@ -33,7 +33,7 @@ jobs:
           git checkout test || exit 1
           git pull origin test || exit 1
 
-      # Passo 4: Deploy no servidor
+      # Deploy no servidor
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
