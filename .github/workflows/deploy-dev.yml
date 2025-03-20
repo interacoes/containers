@@ -1,24 +1,47 @@
-name: Deploy Development
+name: Deploy Test Environment
 
 on:
-  push:
-    branches:
-      - development
+  repository_dispatch:
+    types: [frontend-updated]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      # Passo 1: Verificar se o evento foi acionado pela branch test
+      - name: Check if test branch
+        id: check-branch
+        run: |
+          if [ "${{ github.event.client_payload.branch }}" != "test" ]; then
+            echo "This event is not for the test branch. Exiting."
+            exit 78  # Exit with a neutral status to skip the workflow
+          fi
+
+      # Passo 2: Checkout da branch test
+      - name: Checkout Containers repository
         uses: actions/checkout@v3
         with:
-          submodules: true  # Clona os submódulos
+          ref: test
+          submodules: 'recursive'
 
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.7.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Deploy to server
+      # Passo 3: Atualizar o submódulo do frontend para a branch test
+      - name: Update frontend submodule
         run: |
-          ssh -o StrictHostKeyChecking=no usuario@ip-do-servidor 'cd /caminho/do/projeto && ./deploy-dev.sh'
+          cd frontend || exit 1
+          git fetch --all || exit 1
+          git checkout test || exit 1
+          git pull origin test || exit 1
+
+      # Passo 4: Deploy no servidor
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/test || exit 1
+            git pull origin test || exit 1
+            git submodule update --init --recursive || exit 1
+            docker-compose -f docker-compose.yml -f docker-compose.test.yml up -d --build
