@@ -2,22 +2,21 @@ name: Deploy Develop Environment
 
 on:
   repository_dispatch:
-    types: [frontend-develop]
+    types: [frontend-develop]  # Responde apenas ao event-type frontend-develop
 
 jobs:
   deploy:
-    if: github.event.client_payload.branch == 'develop'  # Condição para executar apenas se a branch for develop
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout da branch develop
+      # Passo 1: Checkout da branch develop
       - name: Checkout Containers repository
         uses: actions/checkout@v3
         with:
           ref: develop
           submodules: 'recursive'
 
-      # Atualizar o submódulo do frontend para a branch develop
+      # Passo 2: Atualizar o submódulo do frontend para a branch develop
       - name: Update frontend submodule
         run: |
           cd frontend || exit 1
@@ -25,7 +24,7 @@ jobs:
           git checkout develop || exit 1
           git pull origin develop || exit 1
 
-      # Deploy no servidor
+      # Passo 3: Deploy no servidor
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
