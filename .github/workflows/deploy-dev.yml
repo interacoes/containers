@@ -6,18 +6,10 @@ on:
 
 jobs:
   deploy:
+    if: github.event.client_payload.branch == 'develop'  # Condição para executar apenas se a branch for develop
     runs-on: ubuntu-latest
 
     steps:
-      # Verificar se o evento foi acionado pela branch develop
-      - name: Check if develop branch
-        id: check-branch
-        run: |
-          if [ "${{ github.event.client_payload.branch }}" != "develop" ]; then
-            echo "This event is not for the develop branch. Exiting."
-            exit 78  # Exit with a neutral status to skip the workflow
-          fi
-
       # Checkout da branch develop
       - name: Checkout Containers repository
         uses: actions/checkout@v3
