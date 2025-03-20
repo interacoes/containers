@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  frontend:
+    image: interacoes-frontend-image:dev
+    environment:
+      NODE_ENV: development
+    ports:
+      - "4001:4001"
+  nginx:
+    ports:
+      - "81:81"
