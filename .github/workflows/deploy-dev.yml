@@ -13,7 +13,7 @@ jobs:
       - name: Check if dev branch
         id: check-branch
         run: |
-          if [ "${{ github.event.client_payload.branch }}" != "dev" ]; then
+          if [ "${{ github.event.client_payload.branch }}" != "develop" ]; then
             echo "This event is not for the dev branch. Exiting."
             exit 78  # Exit with a neutral status to skip the workflow
           fi
@@ -30,8 +30,8 @@ jobs:
         run: |
           cd frontend || exit 1
           git fetch --all || exit 1
-          git checkout dev || exit 1
-          git pull origin dev || exit 1
+          git checkout develop || exit 1
+          git pull origin develop || exit 1
 
       # Passo 4: Deploy no servidor
       - name: Deploy to server
@@ -41,7 +41,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /var/www/dev || exit 1
+            cd /var/www/develop || exit 1
             git pull origin dev || exit 1
             git submodule update --init --recursive || exit 1
             docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
