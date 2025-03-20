@@ -1,4 +1,4 @@
-name: Deploy Dev Environment
+name: Deploy Develop Environment
 
 on:
   repository_dispatch:
@@ -9,31 +9,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Passo 1: Verificar se o evento foi acionado pela branch dev
-      - name: Check if dev branch
+      # Verificar se o evento foi acionado pela branch develop
+      - name: Check if develop branch
         id: check-branch
         run: |
-          if [ "${{ github.event.client_payload.branch }}" != "dev" ]; then
-            echo "This event is not for the dev branch. Exiting."
+          if [ "${{ github.event.client_payload.branch }}" != "develop" ]; then
+            echo "This event is not for the develop branch. Exiting."
             exit 78  # Exit with a neutral status to skip the workflow
           fi
 
-      # Passo 2: Checkout da branch dev
+      # Checkout da branch develop
       - name: Checkout Containers repository
         uses: actions/checkout@v3
         with:
-          ref: dev
+          ref: develop
           submodules: 'recursive'
 
-      # Passo 3: Atualizar o submódulo do frontend para a branch dev
+      # Atualizar o submódulo do frontend para a branch develop
       - name: Update frontend submodule
         run: |
           cd frontend || exit 1
           git fetch --all || exit 1
-          git checkout dev || exit 1
-          git pull origin dev || exit 1
+          git checkout develop || exit 1
+          git pull origin develop || exit 1
 
-      # Passo 4: Deploy no servidor
+      # Deploy no servidor
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
@@ -41,7 +41,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /var/www/dev || exit 1
-            git pull origin dev || exit 1
+            cd /var/www/develop || exit 1
+            git pull origin develop || exit 1
             git submodule update --init --recursive || exit 1
-            docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+            docker-compose -f docker-compose.yml -f docker-compose.develop.yml up -d --build
