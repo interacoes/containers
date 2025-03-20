@@ -2,7 +2,7 @@ name: Deploy Develop Environment
 
 on:
   repository_dispatch:
-    types: [frontend-updated]
+    types: [frontend-develop]
 
 jobs:
   deploy:
