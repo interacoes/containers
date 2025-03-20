@@ -23,8 +23,8 @@ jobs:
         run: |
           cd frontend || exit 1
           git fetch --all || exit 1
-          git checkout develop || exit 1
-          git pull origin develop || exit 1
+          git checkout develop -f || exit 1
+          git pull origin develop -f || exit 1
 
       # Passo 3: Deploy no servidor
       - name: Deploy to server
