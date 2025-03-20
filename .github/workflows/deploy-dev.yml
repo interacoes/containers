@@ -38,4 +38,5 @@ jobs:
             git config --global url."git@github.com:".insteadOf "https://github.com/"
             git pull origin develop || exit 1
             git submodule update --init --recursive || exit 1
-            docker compose -f docker-compose.yml -f docker-compose.develop.yml up -d --build
+            ls
+            docker compose up -d --build
