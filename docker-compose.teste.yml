@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  frontend:
+    image: interacoes-frontend-image:test
+    environment:
+      NODE_ENV: test
+    ports:
+      - "4002:4001"
+  nginx:
+    ports:
+      - "82:81"
