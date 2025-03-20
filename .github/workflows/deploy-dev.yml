@@ -2,10 +2,11 @@ name: Deploy Develop Environment
 
 on:
   repository_dispatch:
-    types: [frontend-develop]  # Responde apenas ao event-type frontend-develop
+    types: [frontend-updated]
 
 jobs:
   deploy:
+    if: github.event.client_payload.branch == 'develop'  # Executa apenas se a branch for develop
     runs-on: ubuntu-latest
 
     steps:
