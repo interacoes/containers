@@ -39,8 +39,7 @@ jobs:
             cd /var/www/develop || exit 1
             cd frontend/
             git checkout develop
+            ls
             cd ..
             git config --global url."git@github.com:".insteadOf "https://github.com/"
-            git submodule update --init --recursive || exit 1
-            ls
             docker compose up -d --build
