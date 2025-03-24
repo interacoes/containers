@@ -23,7 +23,7 @@ jobs:
         run: |
           cd frontend 
           git fetch origin develop 
-          git checkout develop
+          git checkout -b develop
           git pull origin develop -f 
           ls
 
