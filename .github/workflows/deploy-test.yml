@@ -6,7 +6,7 @@ on:
 
 jobs:
   deploy:
-    if: github.event.client_payload.branch == 'develop'  # Executa apenas se a branch for develop
+    if: github.event.client_payload.branch == 'test'  # Executa apenas se a branch for develop
     runs-on: ubuntu-latest
 
     steps:
