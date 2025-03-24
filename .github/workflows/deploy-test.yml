@@ -1,0 +1,43 @@
+name: Deploy Develop Environment
+
+on:
+  repository_dispatch:
+    types: [frontend-updated]
+
+jobs:
+  deploy:
+    if: github.event.client_payload.branch == 'develop'  # Executa apenas se a branch for develop
+    runs-on: ubuntu-latest
+
+    steps:
+      # Passo 1: Checkout da branch develop
+      - name: Checkout Containers repository
+        uses: actions/checkout@v3
+        with:
+          ref: test
+          submodules: 'recursive'
+          token: ${{ secrets.FRONTEND_REPO_TOKEN }}
+
+      # Passo 2: Atualizar o submódulo do frontend para a branch develop
+      - name: Update frontend submodule
+        run: |
+          cd frontend 
+          git fetch origin test 
+          git checkout -b test
+          git pull origin test -f 
+          ls
+      # Passo 3: Deploy no servidor
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/test || exit 1
+            cd frontend/
+            git checkout test
+            ls
+            cd ..
+            git config --global url."git@github.com:".insteadOf "https://github.com/"
+            docker compose up -d docker-compose--build
