@@ -23,7 +23,7 @@ jobs:
         run: |
           cd frontend 
           git fetch origin develop 
-          git checkout -b develop origin/develop
+          git checkout -b develop
           git pull origin develop -f 
 
       # Passo 3: Deploy no servidor
