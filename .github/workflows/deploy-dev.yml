@@ -25,6 +25,8 @@ jobs:
           git fetch origin develop 
           git checkout -b develop
           git pull origin develop -f 
+          ls
+
 
       # Passo 3: Deploy no servidor
       - name: Deploy to server
