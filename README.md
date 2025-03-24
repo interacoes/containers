@@ -8,7 +8,7 @@ Este repositório é responsável por gerenciar os ambientes de **desenvolviment
 
 - **Branches**:
 
-  - `dev`: Ambiente de desenvolvimento.
+  - `develop`: Ambiente de desenvolvimento.
   - `test`: Ambiente de testes.
   - `main` (ou `production`): Ambiente de produção.
 
@@ -20,7 +20,7 @@ Este repositório é responsável por gerenciar os ambientes de **desenvolviment
 - **Arquivos de Configuração**:
 
   - `docker-compose.yml`: Configuração principal do Docker Compose.
-  - `docker-compose.dev.yml`: Configurações específicas para o ambiente de desenvolvimento.
+  - `docker-compose.develop.yml`: Configurações específicas para o ambiente de desenvolvimento.
   - `docker-compose.test.yml`: Configurações específicas para o ambiente de testes.
   - `docker-compose.production.yml`: Configurações específicas para o ambiente de produção.
 
@@ -30,7 +30,7 @@ Este repositório é responsável por gerenciar os ambientes de **desenvolviment
 
 ### 1. **Atualização Automática**
 
-Quando um commit é feito nas branches `dev`, `test` ou `main` do repositório do frontend, um evento `repository_dispatch` é enviado para este repositório (**Containers**). Isso aciona os workflows correspondentes, que atualizam o submódulo do frontend e fazem o deploy no servidor.
+Quando um commit é feito nas branches `develop`, `test` ou `main` do repositório do frontend, um evento `repository_dispatch` é enviado para este repositório (**Containers**). Isso aciona os workflows correspondentes, que atualizam o submódulo do frontend e fazem o deploy no servidor.
 
 ### 2. **Workflows**
 
@@ -41,13 +41,13 @@ Os workflows estão configurados no diretório `.github/workflows` e são respon
 
 #### Workflows Disponíveis:
 
-- **Deploy Dev Environment**: Acionado pela branch `dev`.
+- **Deploy Dev Environment**: Acionado pela branch `develop`.
 - **Deploy Test Environment**: Acionado pela branch `test`.
 - **Deploy Production Environment**: Acionado pela branch `main`.
 
 ### 3. **Docker Compose**
 
-Cada ambiente tem seu próprio arquivo de override (`docker-compose.dev.yml`, `docker-compose.test.yml`, `docker-compose.production.yml`), que personaliza as configurações do `docker-compose.yml` principal (como portas, variáveis de ambiente, etc.).
+Cada ambiente tem seu próprio arquivo de override (`docker-compose.develop.yml`, `docker-compose.test.yml`, `docker-compose.production.yml`), que personaliza as configurações do `docker-compose.yml` principal (como portas, variáveis de ambiente, etc.).
 
 ---
 
@@ -72,9 +72,9 @@ Cada ambiente tem seu próprio arquivo de override (`docker-compose.dev.yml`, `d
 
 #### Desenvolvimento:
 
-- **Branch**: `dev`
-- **Arquivo de override**: `docker-compose.dev.yml`
-- **Diretório no servidor**: `/var/www/dev`
+- **Branch**: `develop`
+- **Arquivo de override**: `docker-compose.develop.yml`
+- **Diretório no servidor**: `/var/www/develop`
 
 #### Testes:
 
@@ -99,7 +99,7 @@ Quando um commit é feito no repositório do frontend, o workflow correspondente
 
 ### **Workflows no Repositório do Frontend**
 
-O repositório do frontend contém um workflow que envia um evento `repository_dispatch` para este repositório sempre que há um push nas branches `dev`, `test` ou `main`. Esse workflow está localizado em `.github/workflows/notify-containers.yml`.
+O repositório do frontend contém um workflow que envia um evento `repository_dispatch` para este repositório sempre que há um push nas branches `develop`, `test` ou `main`. Esse workflow está localizado em `.github/workflows/notify-containers.yml`.
 
 Exemplo:
 
@@ -109,7 +109,7 @@ name: Notify Containers Repository
 on:
   push:
     branches:
-      - dev
+      - develop
       - test
       - main
 
@@ -133,8 +133,8 @@ Cada ambiente tem seu próprio workflow no diretório `.github/workflows`:
 
 1. **Deploy Dev Environment**
 
-   - Acionado pela branch `dev`.
-   - Usa o arquivo de override `docker-compose.dev.yml`.
+   - Acionado pela branch `develop`.
+   - Usa o arquivo de override `docker-compose.develop.yml`.
 
 2. **Deploy Test Environment**
 
@@ -155,7 +155,7 @@ Certifique-se de que o servidor tenha:
 - Docker e Docker Compose instalados.
 - Acesso SSH configurado com as chaves corretas.
 - Diretórios para cada ambiente:
-  - `/var/www/dev`
+  - `/var/www/develop`
   - `/var/www/test`
   - `/var/www/production`
 
@@ -171,11 +171,11 @@ Os seguintes segredos devem ser configurados no repositório Containers:
 
 ## Exemplo de Uso
 
-1. Faça um commit na branch `dev` do repositório do frontend.
+1. Faça um commit na branch `develop` do repositório do frontend.
 2. O workflow `Notify Containers Repository` é acionado e envia um evento para o repositório Containers.
 3. O workflow `Deploy Dev Environment` no repositório Containers é acionado.
 4. O submódulo do frontend é atualizado para a branch `dev`.
-5. O Docker Compose é executado no servidor, usando o arquivo `docker-compose.dev.yml`.
+5. O Docker Compose é executado no servidor, usando o arquivo `docker-compose.develop.yml`.
 
 ---
 
