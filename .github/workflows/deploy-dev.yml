@@ -23,7 +23,7 @@ jobs:
         run: |
           cd frontend 
           git fetch origin develop 
-          git checkout -b develop
+          git checkout develop
           git pull origin develop -f 
           ls
 
@@ -37,6 +37,9 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /var/www/develop || exit 1
+            cd frontend/
+            git checkout develop
+            cd ..
             git config --global url."git@github.com:".insteadOf "https://github.com/"
             git submodule update --init --recursive || exit 1
             ls
