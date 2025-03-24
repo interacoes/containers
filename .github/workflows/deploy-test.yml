@@ -40,4 +40,4 @@ jobs:
             ls
             cd ..
             git config --global url."git@github.com:".insteadOf "https://github.com/"
-            docker compose up -d docker-compose--build
+            docker compose -f docker-compose.yml -f docker-compose.test.yml -d --build
