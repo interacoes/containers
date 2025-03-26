@@ -76,6 +76,7 @@ services:
     environment:
       PGDATA: /pgdata
       POSTGRES_PASSWORD: dspace
+      POSTGRES_USER: postgres
     networks:
       dspacenet:
     ports:
