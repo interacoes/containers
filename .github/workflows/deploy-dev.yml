@@ -1,4 +1,4 @@
-name: Deploy Develop Environment
+name: Deploy Environment
 
 on:
   repository_dispatch:
@@ -6,29 +6,27 @@ on:
 
 jobs:
   deploy:
-    if: github.event.client_payload.branch == 'develop'  # Executa apenas se a branch for develop
     runs-on: ubuntu-latest
 
     steps:
-      # Passo 1: Checkout da branch develop
+      # Passo 1: Checkout da branch, verificando qual branch foi disparada
       - name: Checkout Containers repository
         uses: actions/checkout@v3
         with:
-          ref: develop
+          ref: ${{ github.event.client_payload.branch }}  # Vai pegar a branch do payload
           submodules: 'recursive'
           token: ${{ secrets.FRONTEND_REPO_TOKEN }}
 
-      # Passo 2: Atualizar o submódulo do frontend para a branch develop
+      # Passo 2: Atualizar o submódulo do frontend conforme a branch
       - name: Update frontend submodule
         run: |
-          cd frontend 
-          git fetch origin develop 
-          git checkout -b develop
-          git pull origin develop -f 
+          cd frontend
+          git fetch origin ${{ github.event.client_payload.branch }}  # Faz fetch da branch correta
+          git checkout -b ${{ github.event.client_payload.branch }}  # Faz checkout da branch correta
+          git pull origin ${{ github.event.client_payload.branch }} -f 
           ls
 
-
-      # Passo 3: Deploy no servidor
+      # Passo 3: Deploy no servidor, dependendo da branch
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
@@ -36,10 +34,31 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /var/www/develop || exit 1
-            cd frontend/
-            git checkout develop
-            ls
-            cd ..
-            git config --global url."git@github.com:".insteadOf "https://github.com/"
-            docker compose up -d --build
+            if [ "${{ github.event.client_payload.branch }}" == "develop" ]; then
+              cd /var/www/develop || exit 1
+              cd frontend/
+              git checkout develop
+              ls
+              cd ..
+              git config --global url."git@github.com:".insteadOf "https://github.com/"
+              docker compose up -d --build
+
+
+            elif [ "${{ github.event.client_payload.branch }}" == "test" ]; then
+              cd /var/www/test || exit 1
+              cd frontend/
+              git checkout test
+              ls
+              cd ..
+              git config --global url."git@github.com:".insteadOf "https://github.com/"
+              docker compose up -d --build
+
+            else
+              cd /var/www/main || exit 1
+              cd frontend/
+              git checkout main
+              ls
+              cd ..
+              git config --global url."git@github.com:".insteadOf "https://github.com/"
+              docker compose up -d --build
+            fi
