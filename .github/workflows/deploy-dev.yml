@@ -20,7 +20,6 @@ jobs:
       # Passo 2: Atualizar o submódulo do frontend conforme a branch
       - name: Update frontend submodule
         run: |
-          cd containers
           cd frontend
           git fetch origin ${{ github.event.client_payload.branch }}  # Faz fetch da branch correta
           git checkout -b ${{ github.event.client_payload.branch }}  # Faz checkout da branch correta
