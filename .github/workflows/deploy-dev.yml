@@ -51,6 +51,7 @@ jobs:
               git checkout test
               ls
               cd ..
+              git pull origin test
               git config --global url."git@github.com:".insteadOf "https://github.com/"
               docker compose up -d --build
 
@@ -60,6 +61,7 @@ jobs:
               git checkout main
               ls
               cd ..
+              git pull origin main
               git config --global url."git@github.com:".insteadOf "https://github.com/"
               docker compose up -d --build
             fi
