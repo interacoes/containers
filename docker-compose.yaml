@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Backend (Java/DSpace)
   backend:
@@ -23,7 +21,7 @@ services:
       # from the host machine. This IP range MUST correspond to the 'dspacenet' subnet defined above.
       proxies__P__trusted__P__ipranges: '172.23.0'
       LOGGING_CONFIG: /dspace/config/log4j2-container.xml
-      db__P__url: 'jdbc:postgresql://dspacedb:5432/dspace'
+      db__P__url: 'jdbc:postgresql://dspacedb:5432/dspace?sslmode=disable&ssl=false'
       db__P__username: dspace  # Usuário do banco de dados
       db__P__password: dspace    # Senha do banco de dados
       solr__P__server: http://dspacesolr:8983/solr
@@ -78,6 +76,7 @@ services:
     environment:
       PGDATA: /pgdata
       POSTGRES_PASSWORD: dspace
+      POSTGRES_USER: dspace
     networks:
       dspacenet:
     ports:
@@ -94,6 +93,22 @@ services:
       timeout: 5s
       retries: 10
 
+  #PgAdmin
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: interacoes@admin.com  # Altere para seu email
+      PGADMIN_DEFAULT_PASSWORD: admin123      # Altere para uma senha segura
+    ports:
+      - "5050:80"  # Acessível em http://localhost:5050
+    networks:
+      - dspacenet
+    depends_on:
+      - dspacedb
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin  
+  
   # Solr
   dspacesolr:
     container_name: dspacesolr
@@ -183,3 +198,4 @@ volumes:
   assetstore:
   pgdata:
   solr_data:
+  pgadmin-data: 
