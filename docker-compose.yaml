@@ -93,6 +93,22 @@ services:
       timeout: 5s
       retries: 10
 
+  #PgAdmin
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: interacoes@admin.com  # Altere para seu email
+      PGADMIN_DEFAULT_PASSWORD: admin123      # Altere para uma senha segura
+    ports:
+      - "5050:80"  # Acessível em http://localhost:5050
+    networks:
+      - dspacenet
+    depends_on:
+      - dspacedb
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin  
+  
   # Solr
   dspacesolr:
     container_name: dspacesolr
