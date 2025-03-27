@@ -198,3 +198,4 @@ volumes:
   assetstore:
   pgdata:
   solr_data:
+  pgadmin-data: 
