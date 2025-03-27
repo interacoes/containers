@@ -108,6 +108,7 @@ services:
       - dspacedb
     volumes:
       - pgadmin-data:/var/lib/pgadmin  
+      - ./backups_pgadmin:/backups
   
   # Solr
   dspacesolr:
