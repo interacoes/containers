@@ -25,7 +25,7 @@ services:
       db__P__username: dspace  # Usuário do banco de dados
       db__P__password: dspace    # Senha do banco de dados
       solr__P__server: http://dspacesolr:8983/solr
-      dspace__P__server__P__url: http://backend:8080/server
+      dspace__P__server__P__url: http://backup.ltap.ifce.edu.br:8080/server
       dspace__P__ui__P__url: http://frontend:4000
     ports:
     - published: 8080
