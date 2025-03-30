@@ -1,11 +1,13 @@
 version: '3.8'
 services:
   frontend:
-    image: interacoes-frontend-image:dev
     environment:
-      NODE_ENV: development
+      - NODE_ENV=development
     ports:
-      - "4001:4001"
+      - "4200:4200"  # Porta do Angular dev server
+  
   nginx:
+    environment:
+      - HOSTNAME=dev.interacoes.ifce.edu.br
     ports:
-      - "81:81"
+      - "4000:80"
