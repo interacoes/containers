@@ -42,7 +42,7 @@ jobs:
               cd ..
               git pull origin develop
               git config --global url."git@github.com:".insteadOf "https://github.com/"
-              docker compose up -d --build
+              docker compose -f docker-compose.yml -f docker-compose.develop.yml up -d --build
 
 
             elif [ "${{ github.event.client_payload.branch }}" == "test" ]; then
@@ -53,7 +53,7 @@ jobs:
               cd ..
               git pull origin test
               git config --global url."git@github.com:".insteadOf "https://github.com/"
-              docker compose up -d --build
+              docker compose -f docker-compose.yml -f docker-compose.teste.yml up -d --build
 
             else
               cd /var/www/main || exit 1
@@ -63,5 +63,5 @@ jobs:
               cd ..
               git pull origin main
               git config --global url."git@github.com:".insteadOf "https://github.com/"
-              docker compose up -d --build
+              docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
             fi
