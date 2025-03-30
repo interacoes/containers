@@ -20,7 +20,6 @@ jobs:
       # Passo 2: Atualizar o submódulo do frontend conforme a branch
       - name: Update frontend submodule
         run: |
-          cd containers
           cd frontend
           git fetch origin ${{ github.event.client_payload.branch }}  # Faz fetch da branch correta
           git checkout -b ${{ github.event.client_payload.branch }}  # Faz checkout da branch correta
@@ -41,27 +40,28 @@ jobs:
               git checkout develop
               ls
               cd ..
+              git pull origin develop
               git config --global url."git@github.com:".insteadOf "https://github.com/"
-              docker compose up -d --build
+              docker compose -f docker-compose.yml -f docker-compose.develop.yml up -d --build
 
 
             elif [ "${{ github.event.client_payload.branch }}" == "test" ]; then
               cd /var/www/test || exit 1
-              cd containers
               cd frontend/
               git checkout test
               ls
               cd ..
+              git pull origin test
               git config --global url."git@github.com:".insteadOf "https://github.com/"
-              docker compose up -d --build
+              docker compose -f docker-compose.yml -f docker-compose.teste.yml up -d --build
 
             else
               cd /var/www/main || exit 1
-              cd containers
               cd frontend/
               git checkout main
               ls
               cd ..
+              git pull origin main
               git config --global url."git@github.com:".insteadOf "https://github.com/"
-              docker compose up -d --build
+              docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
             fi
