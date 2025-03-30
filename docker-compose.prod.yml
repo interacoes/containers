@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  nginx:
+    environment:
+      - HOSTNAME=interacoes.ifce.edu.br
+    ports:
+      - "80:80"
+      - "443:443"
