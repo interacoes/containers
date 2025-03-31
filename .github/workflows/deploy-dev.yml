@@ -16,14 +16,16 @@ jobs:
           ref: ${{ github.event.client_payload.branch }}  # Vai pegar a branch do payload
           submodules: 'recursive'
           token: ${{ secrets.FRONTEND_REPO_TOKEN }}
+          fetch-depth: 0
 
       # Passo 2: Atualizar o submódulo do frontend conforme a branch
       - name: Update frontend submodule
         run: |
+          git submodule update --init --recursive --remote --merge
           cd frontend
           git fetch origin ${{ github.event.client_payload.branch }}  # Faz fetch da branch correta
-          git checkout -b ${{ github.event.client_payload.branch }}  # Faz checkout da branch correta
-          git pull origin ${{ github.event.client_payload.branch }} -f 
+          git checkout ${{ github.event.client_payload.branch }}  # Faz checkout da branch correta
+          git pull origin ${{ github.event.client_payload.branch }}
           ls
 
       # Passo 3: Deploy no servidor, dependendo da branch
@@ -34,33 +36,28 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            # Configura o git para usar SSH
+            git config --global url."git@github.com:".insteadOf "https://github.com/"
+            
+            # Navega para o diretório correto baseado na branch
             if [ "${{ github.event.client_payload.branch }}" == "develop" ]; then
-              cd /var/www/develop || exit 1
-              cd frontend/
-              git checkout develop
-              ls
-              cd ..
-              git pull origin develop
-              git config --global url."git@github.com:".insteadOf "https://github.com/"
-              docker compose -f docker-compose.yaml -f docker-compose.develop.yml up -d --build
-
-
+              cd /var/www/develop
+              compose_files="-f docker-compose.yaml -f docker-compose.develop.yml"
             elif [ "${{ github.event.client_payload.branch }}" == "test" ]; then
-              cd /var/www/test || exit 1
-              cd frontend/
-              git checkout test
-              ls
-              cd ..
-              git pull origin test
-              git config --global url."git@github.com:".insteadOf "https://github.com/"
-              docker compose -f docker-compose.yaml -f docker-compose.teste.yml up -d --build
-
+              cd /var/www/test
+              compose_files="-f docker-compose.yaml -f docker-compose.teste.yml"
             else
-              cd /var/www/main || exit 1
-              cd frontend/
-              git checkout main
-              ls
-              cd ..
+              cd /var/www/main
+              compose_files="-f docker-compose.yaml -f docker-compose.prod.yml"
+            fi
+            
+            # Atualiza o repositório e submódulos no servidor
+            git checkout ${{ github.event.client_payload.branch }}
+            git pull origin ${{ github.event.client_payload.branch }}
+            git submodule update --init --recursive --remote
+            
+            # Rebuild e restart dos containers
+            docker compose $compose_files up -d --build --force-recreate
               git pull origin main
               git config --global url."git@github.com:".insteadOf "https://github.com/"
               docker compose -f docker-compose.yaml -f docker-compose.prod.yml up -d --build
