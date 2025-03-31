@@ -36,28 +36,30 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Configura o git para usar SSH
-            git config --global url."git@github.com:".insteadOf "https://github.com/"
-            
-            # Navega para o diretório correto baseado na branch
             if [ "${{ github.event.client_payload.branch }}" == "develop" ]; then
-              cd /var/www/develop
-              compose_files="-f docker-compose.yaml -f docker-compose.develop.yml"
+              cd /var/www/develop 
+              cd frontend/
+              git checkout develop
+              ls
+              cd ..
+              git pull origin develop
+              git config --global url."git@github.com:".insteadOf "https://github.com/"
+              docker compose -f docker-compose.yaml -f docker-compose.develop.yml up -d --build
             elif [ "${{ github.event.client_payload.branch }}" == "test" ]; then
-              cd /var/www/test
-              compose_files="-f docker-compose.yaml -f docker-compose.teste.yml"
+              cd /var/www/test || exit 1
+              cd frontend/
+              git checkout test
+              ls
+              cd ..
+              git pull origin test
+              git config --global url."git@github.com:".insteadOf "https://github.com/"
+              docker compose -f docker-compose.yaml -f docker-compose.teste.yml up -d --build
             else
-              cd /var/www/main
-              compose_files="-f docker-compose.yaml -f docker-compose.prod.yml"
-            fi
-            
-            # Atualiza o repositório e submódulos no servidor
-            git checkout ${{ github.event.client_payload.branch }}
-            git pull origin ${{ github.event.client_payload.branch }}
-            git submodule update --init --recursive --remote
-            
-            # Rebuild e restart dos containers
-            docker compose $compose_files up -d --build --force-recreate
+              cd /var/www/main || exit 1
+              cd frontend/
+              git checkout main
+              ls
+              cd ..
               git pull origin main
               git config --global url."git@github.com:".insteadOf "https://github.com/"
               docker compose -f docker-compose.yaml -f docker-compose.prod.yml up -d --build
