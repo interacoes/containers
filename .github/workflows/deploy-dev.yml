@@ -21,7 +21,7 @@ jobs:
       # Passo 2: Atualizar o submódulo do frontend conforme a branch
       - name: Update frontend submodule
         run: |
-          git submodule update --init --recursive --remote
+          git submodule update --init --recursive --remote --force
           cd frontend
           git fetch origin ${{ github.event.client_payload.branch }}  # Faz fetch da branch correta
           git checkout ${{ github.event.client_payload.branch }}  # Faz checkout da branch correta
